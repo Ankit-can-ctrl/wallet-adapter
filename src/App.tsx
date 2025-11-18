@@ -17,7 +17,7 @@ import Account from "./components/Account";
 
 const App = () => {
   return (
-    <ConnectionProvider endpoint={import.meta.env.VITE_RPC_URL}>
+    <ConnectionProvider endpoint={import.meta.env.VITE_RPC_DEV_URL}>
       <WalletProvider wallets={[]} autoConnect>
         <WalletModalProvider>
           <WalletMultiButton></WalletMultiButton>
