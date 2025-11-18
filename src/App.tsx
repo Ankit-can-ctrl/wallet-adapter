@@ -13,6 +13,7 @@ import {
 import "@solana/wallet-adapter-react-ui/styles.css";
 import Airdrop from "./components/Airdrop";
 import SignTransaction from "./components/SignTransaction";
+import Account from "./components/Account";
 
 const App = () => {
   return (
@@ -30,6 +31,10 @@ const App = () => {
             <h1>Sign a transaction</h1>
             <p>==========================</p>
             <SignTransaction />
+          </div>
+          <div>
+            <p>==========================</p>
+            <Account />
           </div>
         </WalletModalProvider>
       </WalletProvider>
