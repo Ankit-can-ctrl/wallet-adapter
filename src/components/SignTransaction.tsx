@@ -17,6 +17,10 @@ const SignTransaction = () => {
     receiverKey: "",
     sol: 0,
   });
+  const [signArray, setSignArray] = useState<string[]>(() => {
+    const saved = localStorage.getItem("txSignatures");
+    return saved ? JSON.parse(saved) : [];
+  });
   const { publicKey, signTransaction } = useWallet();
   const { connection } = useConnection();
 
@@ -28,6 +32,10 @@ const SignTransaction = () => {
   useEffect(() => {
     console.log(data);
   }, [data]);
+
+  useEffect(() => {
+    localStorage.setItem("txSignatures", JSON.stringify(signArray));
+  }, [signArray]);
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -86,31 +94,46 @@ const SignTransaction = () => {
       const signature = await connection.sendRawTransaction(signed.serialize());
       await connection.confirmTransaction(signature, "confirmed");
 
+      setSignArray((prev) => [...prev, signature]);
       alert("Transaction sent! Signature: " + signature);
       console.log("Transaction signature:", signature);
     } catch (error) {
-      alert("Invalid solana address format.");
-      console.log("Invalid solana address format.", error);
+      alert("Something went wrong during the transfer.");
+      console.log("something went wrong while sending.", error);
     }
   };
   return (
-    <div>
-      <input
-        name="receiverKey"
-        value={data.receiverKey}
-        type="text"
-        onChange={handleInput}
-        placeholder="Public Key"
-      />
-      <input
-        name="sol"
-        value={data.sol}
-        type="number"
-        onChange={handleInput}
-        placeholder="Amount"
-      />
-      <button onClick={handleSignTransaction}>Send</button>
-    </div>
+    <>
+      <div>
+        <input
+          name="receiverKey"
+          value={data.receiverKey}
+          type="text"
+          onChange={handleInput}
+          placeholder="Public Key"
+        />
+        <input
+          name="sol"
+          value={data.sol}
+          type="number"
+          onChange={handleInput}
+          placeholder="Amount"
+        />
+        <button onClick={handleSignTransaction}>Send</button>
+      </div>
+      <div>
+        <h1>Transaction history :</h1>
+        <div>
+          {signArray.length === 0 && <p>No transactions to show.</p>}
+          {signArray &&
+            signArray.map((sign) => (
+              <a href={`https://solscan.io/tx/${sign}?cluster=devnet`}>
+                {sign}
+              </a>
+            ))}
+        </div>
+      </div>
+    </>
   );
 };
 
