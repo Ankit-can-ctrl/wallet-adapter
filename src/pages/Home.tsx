@@ -233,8 +233,8 @@ const Home = () => {
 
         {/* Preview Image Container */}
         <div ref={previewRef} className="max-w-6xl mx-auto mt-20">
-          <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-purple-200 via-blue-200 to-cyan-200">
-            <div className="aspect-video flex items-center justify-center">
+          <div className=" rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-purple-200 via-blue-200 to-cyan-200">
+            <div className=" flex items-center justify-center">
               <div className="text-gray-500 text-lg">
                 {publicKey ? (
                   <Dashboard />

@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import {
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  LAMPORTS_PER_SOL,
-} from "@solana/web3.js";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import Loader from "./Loader";
 import SendAirdrop from "./SendAirdrop";
 import SendSol from "./SendSol";
+import Network from "./Network";
 
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
@@ -108,7 +104,7 @@ const Dashboard = () => {
         {activeView === "dashboard" && (
           <div className="grid md:grid-cols-2 gap-6">
             {/* Send Airdrop Card */}
-            <SendAirdrop pubKey={publicKey} />
+            <SendAirdrop />
 
             {/* Send SOL Card */}
             <SendSol />
@@ -191,6 +187,10 @@ const Dashboard = () => {
             )} */}
           </div>
         )}
+      </div>
+
+      <div className="w-full flex items-end">
+        <Network />
       </div>
     </div>
   );

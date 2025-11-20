@@ -1,22 +1,11 @@
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import type { Connection } from "@solana/web3.js";
+import { useConnection } from "@solana/wallet-adapter-react";
+import { Connection } from "@solana/web3.js";
 import { useEffect, useState } from "react";
+import Loader from "./Loader";
 
-const Airdrop = () => {
+const Network = () => {
   const [network, setNetwork] = useState<string>("Loading...");
-  const { publicKey } = useWallet();
   const { connection } = useConnection();
-
-  // const getNetwork = (endpoint: string) => {
-  //   if (endpoint.includes("mainnet")) return "Mainnet";
-  //   if (endpoint.includes("devnet")) return "Devnet";
-  //   if (endpoint.includes("testnet")) return "Testnet";
-  //   if (endpoint.includes("localhost")) return "Localhost";
-  //   return "Unkown";
-  // };
-
-  // const network = getNetwork(import.meta.env.VITE_RPC_URL);
-
   // checking network using genesis hash
   const getNetworkFromGenesisHash = async (
     connection: Connection
@@ -48,29 +37,13 @@ const Airdrop = () => {
     detectNetwork();
   }, [connection]);
 
-  const handleAirdrop = async () => {
-    try {
-      if (!publicKey) {
-        alert("Please connect your wallet first!");
-        return;
-      }
-      await connection.requestAirdrop(publicKey, 1000000000);
-      alert("Airdrop sent!");
-    } catch (error) {
-      console.log(error);
-    }
-  };
   return (
-    <div>
-      <div>
-        <div>
-          <p>Network : {network}</p>
-        </div>
-        <input type="text" placeholder="Enter Amout of SOL to airdrop. " />
-        <button onClick={handleAirdrop}>Send Airdrop</button>
+    <div className=" w-full flex items-center justify-center  font-semibold">
+      <div className=" text-white bg-black py-2 px-3 rounded-xl">
+        Network : {network === "Loading..." ? <Loader /> : network}
       </div>
     </div>
   );
 };
 
-export default Airdrop;
+export default Network;
