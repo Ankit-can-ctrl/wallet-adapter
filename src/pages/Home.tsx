@@ -1,11 +1,22 @@
 // @ts-nocheck
+
+import {
+  WalletDisconnectButton,
+  WalletMultiButton,
+} from "@solana/wallet-adapter-react-ui";
+import { useWallet } from "@solana/wallet-adapter-react";
 import image1 from "../assets/1.png";
 import image2 from "../assets/2.png";
 import image3 from "../assets/3.png";
 import image4 from "../assets/4.png";
 import image5 from "../assets/5.png";
 import image6 from "../assets/6.png";
+import { useRef } from "react";
+import Dashboard from "../components/Dashboard";
+
 const Home = () => {
+  const { publicKey } = useWallet();
+  const previewRef = useRef(null);
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}
@@ -19,39 +30,8 @@ const Home = () => {
             <span className="text-xl font-semibold">Solana</span>
           </div>
 
-          {/* Navigation Links */}
-          {/* <div className="hidden md:flex items-center space-x-8">
-            <a
-              href="#"
-              className="text-gray-700 hover:text-gray-900 transition-colors"
-            >
-              Product
-            </a>
-            <a
-              href="#"
-              className="text-gray-700 hover:text-gray-900 transition-colors"
-            >
-              Features
-            </a>
-            <a
-              href="#"
-              className="text-gray-700 hover:text-gray-900 transition-colors"
-            >
-              Explore
-            </a>
-            <a
-              href="#"
-              className="text-gray-700 hover:text-gray-900 transition-colors"
-            >
-              Pricing
-            </a>
-          </div> */}
-
-          {/* CTA Buttons */}
           <div className="flex items-center space-x-4">
-            <button className="px-5 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
-              Connect Wallet
-            </button>
+            <WalletMultiButton style={{ backgroundColor: "black" }} />
           </div>
         </div>
       </nav>
@@ -220,7 +200,7 @@ const Home = () => {
           {/* Icon */}
           <div className="flex justify-center mb-8">
             <div className="w-24 h-24 bg-white border-4 border-black rounded-2xl flex items-center justify-center shadow-lg">
-              <div className="text-5xl font-bold">19</div>
+              <div className="text-5xl font-bold">W</div>
             </div>
           </div>
 
@@ -241,16 +221,27 @@ const Home = () => {
           </p>
 
           {/* CTA Button */}
-          <button className="px-8 py-4 bg-black text-white text-lg font-medium rounded-lg hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl">
+          <button
+            onClick={() => {
+              previewRef.current?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="px-8 py-4 bg-black text-white text-lg font-medium rounded-lg hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl"
+          >
             Get started
           </button>
         </div>
 
         {/* Preview Image Container */}
-        <div className="max-w-6xl mx-auto mt-20">
+        <div ref={previewRef} className="max-w-6xl mx-auto mt-20">
           <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-purple-200 via-blue-200 to-cyan-200">
             <div className="aspect-video flex items-center justify-center">
-              <div className="text-gray-500 text-lg">Dashboard Preview</div>
+              <div className="text-gray-500 text-lg">
+                {publicKey ? (
+                  <Dashboard />
+                ) : (
+                  "Connect your wallet first to view."
+                )}
+              </div>
             </div>
           </div>
         </div>
