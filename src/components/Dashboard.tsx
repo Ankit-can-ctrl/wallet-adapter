@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import {
@@ -7,10 +7,51 @@ import {
   Transaction,
   LAMPORTS_PER_SOL,
 } from "@solana/web3.js";
+import getBalance from "../utils/getBalance";
 
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
   const [airdropAmount, setAirdropAmount] = useState(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [balance, setBalance] = useState<Number>();
+  const { connection } = useConnection();
+  const { publicKey } = useWallet();
+
+  if (!publicKey) {
+    alert("Connect you wallet.");
+    return;
+  }
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        setLoading(true);
+        const lamps = await connection.getBalance(publicKey);
+        setBalance(lamps / LAMPORTS_PER_SOL);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        console.log("Balance error:", error);
+        alert("Something went wrong while fetching the balance.");
+      }
+    };
+
+    fetchBalance();
+
+    // real-time connection
+    const subscriptionId = connection.onAccountChange(
+      publicKey,
+      (accountInfo) => {
+        setBalance(accountInfo.lamports / LAMPORTS_PER_SOL);
+      },
+      "confirmed"
+    );
+
+    // cleanup
+    return () => {
+      connection.removeAccountChangeListener(subscriptionId);
+    };
+  }, [publicKey, connection]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br min-w-[75rem] from-purple-50 via-blue-50 to-cyan-50">
@@ -20,8 +61,10 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center space-x-3">
-              <div className=" bg-black px-3 py-2 rounded-md  flex items-center justify-center">
-                <span className="text-white font-bold text-xl">Sol : 2</span>
+              <div className="  px-3 py-2 rounded-md  flex items-center justify-center">
+                <span className="text-black font-semibold text-xl">
+                  Balance(SOL) : {loading ? "Loading..." : balance?.toString()}
+                </span>
               </div>
             </div>
 
