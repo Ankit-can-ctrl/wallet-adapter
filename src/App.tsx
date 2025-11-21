@@ -4,9 +4,7 @@ import {
 } from "@solana/wallet-adapter-react";
 
 import {
-  WalletDisconnectButton,
   WalletModalProvider,
-  WalletMultiButton,
 } from "@solana/wallet-adapter-react-ui";
 
 // Default styles that can be overridden by your app
