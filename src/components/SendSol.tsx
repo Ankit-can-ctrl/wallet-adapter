@@ -5,7 +5,9 @@ import {
   SystemProgram,
   Transaction,
 } from "@solana/web3.js";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import Loader from "./Loader";
+import { toast } from "react-toastify";
 
 interface formdata {
   publicKey: string;
@@ -17,6 +19,7 @@ const SendSol = () => {
     publicKey: "",
     sol: 0,
   });
+  const [loading, setLoading] = useState<boolean>(false);
   const { publicKey, signTransaction } = useWallet();
   const { connection } = useConnection();
 
@@ -38,25 +41,26 @@ const SendSol = () => {
     // const receiverPublicKey = new PublicKey(data.receiverKey);
 
     if (!data.publicKey || data.publicKey.trim() === "") {
-      alert("Please enter a recepient address.");
+      toast.error("Please enter a valid public key.");
       return;
     }
     if (!publicKey) {
-      alert("Please connect your wallet before you sign a transaction.");
+      toast.error("Please connect your wallet before you sign a transaction.");
       return;
     }
 
     if (!signTransaction) {
-      alert("Your wallet does not support transaction signing.");
+      toast.error("Your wallet does not support transaction signing.");
       return;
     }
 
     let receiverPublicKey!: PublicKey;
     try {
+      setLoading(true);
       receiverPublicKey = new PublicKey(data.publicKey);
 
       if (!PublicKey.isOnCurve(receiverPublicKey.toBytes())) {
-        alert("Invalid solana address - not a valid public key.");
+        toast.error("Invalid solana address - not a valid public key.");
         return;
       }
 
@@ -75,31 +79,29 @@ const SendSol = () => {
 
       // ask wallet to sign
       const signed = await signTransaction(tx);
-      console.log("Transaction signed.", signed);
 
       // send the signed transaction to the blockchain
       const signature = await connection.sendRawTransaction(signed.serialize());
       await connection.confirmTransaction(signature, "confirmed");
 
-      alert("Transaction sent! Signature: " + signature);
-      console.log("Transaction signature:", signature);
+      setLoading(false);
+      toast.success("SOL sent successfuly.");
+
       setData({
         publicKey: "",
         sol: 0,
       });
     } catch (error) {
-      alert("Something went wrong during the transfer.");
+      setLoading(false);
+      toast.error("Something went wrong during the transfer.");
       console.log("something went wrong while sending.", error);
     }
   };
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
   return (
-    <div className="bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transition-shadow">
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl shadow-lg p-8 hover:shadow-xl transition-shadow border border-blue-100">
       <div className="flex items-center space-x-3 mb-6">
-        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+        <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-md">
           <svg
             className="w-6 h-6 text-white"
             fill="none"
@@ -114,10 +116,10 @@ const SendSol = () => {
             />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-gray-800">Send SOL</h2>
+        <h2 className="text-2xl font-bold text-blue-900">Send SOL</h2>
       </div>
 
-      <p className="text-gray-600 mb-6">
+      <p className="text-blue-700 mb-6">
         Transfer SOL to any Solana wallet address
       </p>
 
@@ -128,7 +130,7 @@ const SendSol = () => {
           name="publicKey"
           type="text"
           placeholder="Recipient's Public Key"
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+          className="w-full px-4 py-3 bg-white border-2 border-blue-200 rounded-xl focus:border-blue-400 focus:outline-none transition-colors placeholder:text-gray-400"
         />
 
         <input
@@ -137,14 +139,14 @@ const SendSol = () => {
           name="sol"
           type="number"
           placeholder="Amount in SOL"
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+          className="w-full px-4 py-3 bg-white border-2 border-blue-200 rounded-xl focus:border-blue-400 focus:outline-none transition-colors placeholder:text-gray-400"
         />
 
         <button
           onClick={handleSignTransaction}
-          className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-cyan-600 transition-all shadow-lg hover:shadow-xl"
+          className="w-full bg-blue-500 text-white py-3 rounded-xl font-semibold hover:bg-blue-600 transition-all shadow-md hover:shadow-lg"
         >
-          Send Transaction
+          {loading ? <Loader /> : "Send"}
         </button>
       </div>
     </div>

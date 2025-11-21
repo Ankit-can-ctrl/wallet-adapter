@@ -2,6 +2,7 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import { Connection } from "@solana/web3.js";
 import { useEffect, useState } from "react";
 import Loader from "./Loader";
+import { toast } from "react-toastify";
 
 const Network = () => {
   const [network, setNetwork] = useState<string>("Loading...");
@@ -23,7 +24,7 @@ const Network = () => {
       if (genesisHash === TESTNET_GENESIS) return "Testnet";
       return "Unknown/custom network.";
     } catch (error) {
-      alert("Error while matching genesis hash.");
+      toast.error("Error while matching genesis hash.");
       return "Unknown";
     }
   };
@@ -39,7 +40,7 @@ const Network = () => {
 
   return (
     <div className=" w-full flex items-center justify-center  font-semibold">
-      <div className=" text-white bg-black py-2 px-3 rounded-xl">
+      <div className=" text-white bg-[#3C84F6] py-2 px-3 rounded-xl">
         Network : {network === "Loading..." ? <Loader /> : network}
       </div>
     </div>

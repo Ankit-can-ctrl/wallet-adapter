@@ -6,6 +6,8 @@ import Loader from "./Loader";
 import SendAirdrop from "./SendAirdrop";
 import SendSol from "./SendSol";
 import Network from "./Network";
+import History from "./History";
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("dashboard");
@@ -16,7 +18,6 @@ const Dashboard = () => {
   const { publicKey } = useWallet();
 
   if (!publicKey) {
-    alert("Connect you wallet.");
     return;
   }
 
@@ -30,7 +31,7 @@ const Dashboard = () => {
       } catch (error) {
         setLoading(false);
         console.log("Balance error:", error);
-        alert("Something went wrong while fetching the balance.");
+        toast.error("Something went wrong while fetching the balance.");
       }
     };
 
@@ -52,7 +53,7 @@ const Dashboard = () => {
   }, [publicKey, connection]);
 
   return (
-    <div className="min-h-screen  min-w-[75rem] ">
+    <div className="h-fit py-5  min-w-[75rem] ">
       {/* Round Navbar */}
       <nav className="px-6 pt-10 mx-5 ">
         <div className="max-w-6xl mx-auto bg-white rounded-full shadow-lg px-8 py-4">
@@ -67,13 +68,13 @@ const Dashboard = () => {
             </div>
 
             {/* Wallet Button */}
-            <WalletMultiButton style={{ backgroundColor: "black" }} />
+            <WalletMultiButton style={{ backgroundColor: "#3C84F6" }} />
           </div>
         </div>
       </nav>
 
       {/* Main Content */}
-      <div className="px-6 py-8 m-5">
+      <div className="px-6  m-5">
         {/* Toggle Switch */}
         <div className="flex justify-center mb-8">
           <div className="bg-white rounded-full p-1 shadow-lg inline-flex">
@@ -81,7 +82,7 @@ const Dashboard = () => {
               onClick={() => setActiveView("dashboard")}
               className={`px-8 py-3 rounded-full font-medium transition-all ${
                 activeView === "dashboard"
-                  ? "bg-black text-white shadow-md"
+                  ? "bg-[#3C84F6] text-white shadow-md"
                   : "text-gray-600 hover:text-gray-800"
               }`}
             >
@@ -91,7 +92,7 @@ const Dashboard = () => {
               onClick={() => setActiveView("history")}
               className={`px-8 py-3 rounded-full font-medium transition-all ${
                 activeView === "history"
-                  ? "bg-black text-white shadow-md"
+                  ? "bg-[#3C84F6] text-white shadow-md"
                   : "text-gray-600 hover:text-gray-800"
               }`}
             >
@@ -114,8 +115,8 @@ const Dashboard = () => {
         {/* History View */}
         {activeView === "history" && (
           <div className="bg-white rounded-3xl shadow-xl p-8">
-            <div className="flex items-center ">
-              <div className=" bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+            <div className="flex flex-col items-center ">
+              <div className=" bg-[#3C84F6] text-white px-5 py-3 flex items-center gap-3 rounded-lg">
                 <svg
                   className="w-6 h-6 text-white"
                   fill="none"
@@ -129,10 +130,10 @@ const Dashboard = () => {
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
+
+                <h2 className="text-2xl font-bold">Transaction History</h2>
               </div>
-              <h2 className="text-2xl font-bold text-gray-800">
-                Transaction History
-              </h2>
+              <History />
             </div>
 
             {/* {txHistory.length === 0 ? (
